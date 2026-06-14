@@ -5,6 +5,18 @@ All notable changes to `@hostess/nextjs` are documented here.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.1.1] - 2026-06-14
+
+### Added
+
+- `homepage` (https://hostess.sh) and `bugs` links in the package manifest, so
+  they surface on the npm package page.
+
+### Changed
+
+- Publish to npm via **OIDC trusted publishing** instead of a stored npm token —
+  no `NPM_TOKEN` secret, and provenance remains automatic.
+
 ## [0.1.0] - 2026-06-13
 
 Initial release. Server-side Next.js integration for Hostess **API Insights**.
@@ -42,4 +54,5 @@ Initial release. Server-side Next.js integration for Hostess **API Insights**.
   (`<Analytics />` / `<SpeedInsights />`) ship in a later release alongside the
   platform RUM ingest path.
 
+[0.1.1]: https://github.com/howl-cloud/hostess-js/releases/tag/v0.1.1
 [0.1.0]: https://github.com/howl-cloud/hostess-js/releases/tag/v0.1.0
