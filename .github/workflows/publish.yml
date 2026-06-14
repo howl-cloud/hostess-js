@@ -1,10 +1,10 @@
 name: Publish
 
-# Publishes @hostess/nextjs to npm when a GitHub Release is published.
-# Requires:
-#   - the `hostess` npm org (reserves the @hostess scope) to exist
-#   - an automation token stored as the NPM_TOKEN repo secret
-# Publishes with provenance (id-token: write) for supply-chain attestation.
+# Publishes @hostess/nextjs to npm when a GitHub Release is published, via npm
+# OIDC trusted publishing — no stored token. Configure the trusted publisher at
+# npmjs.com → @hostess/nextjs → Settings → Trusted Publisher → GitHub Actions
+# (org: howl-cloud, repo: hostess-js, workflow: publish.yml). Provenance is
+# generated automatically under trusted publishing.
 on:
   release:
     types: [published]
@@ -14,7 +14,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-      id-token: write # npm provenance
+      id-token: write # OIDC trusted publishing + provenance
     steps:
       - uses: actions/checkout@v4
       - name: Install pnpm
@@ -25,12 +25,12 @@ jobs:
           node-version: 22
           registry-url: https://registry.npmjs.org
           cache: pnpm
+      - name: Upgrade npm for OIDC trusted publishing (needs >= 11.5.1)
+        run: npm install -g npm@latest
       - name: Install
         run: pnpm install --frozen-lockfile
       - name: Build
         run: pnpm --filter @hostess/nextjs build
-      - name: Publish (public, with provenance)
-        run: npm publish --access public --provenance
+      - name: Publish (OIDC trusted publishing — provenance automatic)
+        run: npm publish --access public
         working-directory: packages/nextjs
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

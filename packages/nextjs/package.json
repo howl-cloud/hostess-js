@@ -8,6 +8,8 @@
     "url": "https://github.com/howl-cloud/hostess-js",
     "directory": "packages/nextjs"
   },
+  "homepage": "https://hostess.sh",
+  "bugs": "https://github.com/howl-cloud/hostess-js/issues",
   "type": "module",
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
