@@ -1,0 +1,9 @@
+packages:
+  - "packages/*"
+
+# Native postinstall builds. The bundler toolchain (bunchee → esbuild / swc)
+# needs its platform binaries; sharp is an unused transitive dep, left gated.
+allowBuilds:
+  "@swc/core": true
+  esbuild: true
+  sharp: false

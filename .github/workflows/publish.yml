@@ -1,0 +1,36 @@
+name: Publish
+
+# Publishes @hostess/nextjs to npm when a GitHub Release is published.
+# Requires:
+#   - the `hostess` npm org (reserves the @hostess scope) to exist
+#   - an automation token stored as the NPM_TOKEN repo secret
+# Publishes with provenance (id-token: write) for supply-chain attestation.
+on:
+  release:
+    types: [published]
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write # npm provenance
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+      - name: Install Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          registry-url: https://registry.npmjs.org
+          cache: pnpm
+      - name: Install
+        run: pnpm install --frozen-lockfile
+      - name: Build
+        run: pnpm --filter @hostess/nextjs build
+      - name: Publish (public, with provenance)
+        run: npm publish --access public --provenance
+        working-directory: packages/nextjs
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

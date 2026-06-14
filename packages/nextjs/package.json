@@ -1,0 +1,52 @@
+{
+  "name": "@hostess/nextjs",
+  "version": "0.1.0",
+  "description": "Native Hostess insights for Next.js — one line in instrumentation.ts.",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/howl-cloud/hostess-js",
+    "directory": "packages/nextjs"
+  },
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "files": ["dist"],
+  "sideEffects": false,
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
+  "scripts": {
+    "build": "bunchee",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@opentelemetry/api": "^1.9.0",
+    "@opentelemetry/exporter-metrics-otlp-http": "^0.219.0",
+    "@opentelemetry/exporter-trace-otlp-http": "^0.219.0",
+    "@opentelemetry/resources": "^2.0.0",
+    "@opentelemetry/sdk-metrics": "^2.0.0",
+    "@opentelemetry/sdk-trace-base": "^2.0.0",
+    "@opentelemetry/sdk-trace-node": "^2.0.0",
+    "@opentelemetry/semantic-conventions": "^1.41.0"
+  },
+  "peerDependencies": {
+    "next": ">=13.4.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "bunchee": "^6.11.0",
+    "typescript": "^5.6.0",
+    "vitest": "^2.1.0"
+  }
+}

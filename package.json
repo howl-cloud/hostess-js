@@ -1,0 +1,13 @@
+{
+  "name": "hostess-js",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Hostess SDK for JavaScript/TypeScript (workspace root).",
+  "license": "MIT",
+  "scripts": {
+    "build": "pnpm -r build",
+    "test": "pnpm -r test",
+    "typecheck": "pnpm -r typecheck"
+  },
+  "packageManager": "pnpm@11.0.8"
+}
