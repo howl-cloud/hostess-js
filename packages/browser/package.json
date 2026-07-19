@@ -1,0 +1,45 @@
+{
+  "name": "@hostess/browser",
+  "version": "0.1.0",
+  "description": "Framework-agnostic browser core for Hostess Audience Analytics and Speed Insights.",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/howl-cloud/hostess-js",
+    "directory": "packages/browser"
+  },
+  "homepage": "https://hostess.sh",
+  "bugs": "https://github.com/howl-cloud/hostess-js/issues",
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "files": ["dist"],
+  "sideEffects": false,
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
+  "scripts": {
+    "build": "bunchee",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "web-vitals": "^5.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "bunchee": "^6.11.0",
+    "jsdom": "^25.0.0",
+    "typescript": "^5.6.0",
+    "vitest": "^2.1.0"
+  }
+}
