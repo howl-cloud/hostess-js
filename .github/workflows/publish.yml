@@ -1,10 +1,18 @@
 name: Publish
 
-# Publishes @hostess/nextjs to npm when a GitHub Release is published, via npm
-# OIDC trusted publishing — no stored token. Configure the trusted publisher at
-# npmjs.com → @hostess/nextjs → Settings → Trusted Publisher → GitHub Actions
-# (org: howl-cloud, repo: hostess-js, workflow: publish.yml). Provenance is
-# generated automatically under trusted publishing.
+# Publishes @hostess/browser and @hostess/nextjs to npm when a GitHub Release
+# is published, via npm OIDC trusted publishing — no stored token. Configure
+# the trusted publisher for EACH package at npmjs.com → <package> → Settings →
+# Trusted Publisher → GitHub Actions (org: howl-cloud, repo: hostess-js,
+# workflow: publish.yml). Provenance is generated automatically under trusted
+# publishing.
+#
+# Packages are packed with `pnpm pack` (not published straight from the
+# workspace) because npm does not understand the workspace:* protocol —
+# pnpm rewrites @hostess/browser's version into the nextjs tarball. Browser
+# publishes first so the nextjs dependency is resolvable the moment it lands.
+# Versions already on the registry are skipped, so re-running a release (or
+# releasing only one bumped package) is safe.
 on:
   release:
     types: [published]
@@ -30,7 +38,17 @@ jobs:
       - name: Install
         run: pnpm install --frozen-lockfile
       - name: Build
-        run: pnpm --filter @hostess/nextjs build
-      - name: Publish (OIDC trusted publishing — provenance automatic)
-        run: npm publish --access public
-        working-directory: packages/nextjs
+        run: pnpm -r build
+      - name: Publish @hostess/browser, then @hostess/nextjs
+        run: |
+          set -euo pipefail
+          for dir in packages/browser packages/nextjs; do
+            name=$(node -p "require('./$dir/package.json').name")
+            version=$(node -p "require('./$dir/package.json').version")
+            if npm view "$name@$version" version >/dev/null 2>&1; then
+              echo "$name@$version already published — skipping"
+              continue
+            fi
+            (cd "$dir" && pnpm pack)
+            npm publish "$dir"/*.tgz --access public
+          done
