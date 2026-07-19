@@ -1,5 +1,6 @@
 packages:
   - "packages/*"
+  - "examples/*"
 
 # Native postinstall builds. The bundler toolchain (bunchee → esbuild / swc)
 # needs its platform binaries; sharp is an unused transitive dep, left gated.

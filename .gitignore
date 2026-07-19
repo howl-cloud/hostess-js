@@ -3,3 +3,7 @@ dist/
 *.tsbuildinfo
 .turbo/
 coverage/
+
+# Next.js example app build output
+.next/
+next-env.d.ts

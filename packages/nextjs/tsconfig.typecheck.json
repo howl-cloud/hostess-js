@@ -1,0 +1,12 @@
+{
+  // Typecheck-only config. Resolves the sibling workspace package from source so
+  // `tsc --noEmit` doesn't need its dist built first (CI typechecks before it
+  // builds). The build (bunchee, via tsconfig.json) must NOT see this mapping —
+  // otherwise it inlines @hostess/browser instead of externalizing it.
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "paths": {
+      "@hostess/browser": ["../browser/src/index.ts"]
+    }
+  }
+}

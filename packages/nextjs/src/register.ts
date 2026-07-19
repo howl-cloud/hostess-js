@@ -6,14 +6,15 @@ import { ATTR_SERVICE_NAME } from "@opentelemetry/semantic-conventions";
 
 import { isEnabled, isNodeRuntime, resolveEndpoint, signalEndpoint } from "./otel";
 import { startMarkerHeartbeat } from "./marker";
-import { SDK_VERSION, readNextVersion } from "./version";
+import { SDK_VERSION } from "./version";
+import { readNextVersion } from "./next-version";
 
 let registered = false;
 
 /**
  * Server instrumentation entry. Re-export from `instrumentation.ts`:
  *
- *     export { register, onRequestError } from "@hostess/nextjs";
+ *     export { register, onRequestError } from "@hostess/nextjs/server";
  *
  * Registers a minimal NodeTracerProvider whose OTLP exporter points at the
  * platform-injected collector, then relies on Next.js's native span emission
