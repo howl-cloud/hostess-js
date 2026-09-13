@@ -1,9 +1,9 @@
 import { useEffect, useRef } from "react";
 import { useParams, usePathname } from "next/navigation";
-import Router from "next/router";
 import type { InjectOptions, RouteInfo, RouteProvider } from "@hostess/browser";
 
-import { computeRoute, stripQuery, type RouteParams } from "./compute-route";
+import { computeRoute, type RouteParams } from "./compute-route";
+import { pagesRouteInfo, subscribeToPagesRouter } from "./pages-route-provider";
 
 type Injector = (opts: InjectOptions) => void;
 type NavKind = "spa" | "back-forward";
@@ -71,7 +71,7 @@ export function useHostessRoutes(inject: Injector, debug: boolean | undefined, s
 
   // Distinguish back/forward from forward SPA navigations.
   useEffect(() => {
-    if (typeof window === "undefined") return;
+    if (!isApp || typeof window === "undefined") return;
     const onPop = () => {
       navRef.current = "back-forward";
     };
@@ -99,26 +99,9 @@ export function useHostessRoutes(inject: Injector, debug: boolean | undefined, s
   // Pages Router navigations: the template is free on `router.route`.
   useEffect(() => {
     if (isApp) return;
-    const onComplete = () => {
-      const info = pagesRouteInfo();
+    return subscribeToPagesRouter((info, nav) => {
       infoRef.current = info;
-      cbRef.current?.(info, navRef.current);
-      navRef.current = "spa";
-    };
-    Router.events?.on("routeChangeComplete", onComplete);
-    return () => {
-      Router.events?.off("routeChangeComplete", onComplete);
-    };
+      cbRef.current?.(info, nav);
+    });
   }, [isApp]);
-}
-
-// Read the Pages Router's current template + concrete path from the imperative
-// singleton. `Router.route` is the template (e.g. `/blog/[slug]`); `asPath` is
-// the concrete path with the query string, which we strip.
-function pagesRouteInfo(): RouteInfo {
-  const router = Router.router;
-  const asPath = router?.asPath ?? (typeof location !== "undefined" ? location.pathname : "/");
-  const path = stripQuery(asPath);
-  const route = router?.route ?? path;
-  return { route, path };
 }

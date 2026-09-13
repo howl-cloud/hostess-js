@@ -82,7 +82,7 @@ describe("Analytics — App Router", () => {
     expect(mock.recorded[0]).toMatchObject({
       kind: "pv",
       nav: "load",
-      sdk: "nextjs@0.2.0",
+      sdk: "nextjs@0.3.0",
       info: { route: "/blog/[slug]", path: "/blog/hello-world" },
     });
   });
@@ -165,7 +165,7 @@ describe("SpeedInsights", () => {
     expect(mock.recorded[0]).toMatchObject({
       kind: "wv",
       nav: "load",
-      sdk: "nextjs@0.2.0",
+      sdk: "nextjs@0.3.0",
       info: { route: "/docs/[...path]", path: "/docs/a/b" },
     });
   });

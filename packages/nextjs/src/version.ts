@@ -5,4 +5,4 @@
 // entry and the `"use client"` components, so it must stay free of any
 // server-only code (e.g. `require`) that would otherwise be dragged across the
 // client boundary. Server-only version probing lives in `./next-version`.
-export const SDK_VERSION = "0.2.0";
+export const SDK_VERSION = "0.3.0";
