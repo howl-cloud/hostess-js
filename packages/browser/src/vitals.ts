@@ -15,12 +15,7 @@ function defaultSdk(): string {
   return `browser@${SDK_VERSION}`;
 }
 
-/**
- * Start collecting Core Web Vitals (LCP, CLS, INP, FCP, TTFB) via the
- * `web-vitals` attribution build. Each metric reports once, finalized at
- * page-hide for the field-only values (CLS, INP) — the queue's hidden-flush
- * path carries those out. No FID (deprecated). Idempotent; no-ops during SSR.
- */
+/** Collect Core Web Vitals via web-vitals (no FID, deprecated). Idempotent; SSR-safe. */
 export function injectSpeedInsights(opts: InjectOptions = {}): void {
   if (!hasDom()) return;
 
@@ -59,16 +54,14 @@ function emitVital(metric: Metric, provider: RouteProvider, debug: boolean, sdk:
   report(beacon, debug);
 }
 
-// web-vitals does not track SPA soft navigations, so a vital is only ever
-// "load" or "back-forward" (bfcache restores).
+// web-vitals ignores SPA navigations; vitals are load or back-forward only.
 function navFromMetric(navigationType: Metric["navigationType"]): NavType {
   return navigationType === "back-forward" || navigationType === "back-forward-cache"
     ? "back-forward"
     : "load";
 }
 
-// CLS is unitless and small — keep four decimals. The millisecond metrics are
-// rounded to whole ms.
+// CLS is unitless (4 decimals); ms metrics round to whole ms.
 function metricValue(metric: Metric): number {
   return metric.name === "CLS"
     ? Math.round(metric.value * 10000) / 10000

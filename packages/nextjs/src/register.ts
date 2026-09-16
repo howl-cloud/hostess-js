@@ -12,18 +12,9 @@ import { readNextVersion } from "./next-version";
 let registered = false;
 
 /**
- * Server instrumentation entry. Re-export from `instrumentation.ts`:
- *
- *     export { register, onRequestError } from "@hostess/nextjs/server";
- *
- * Registers a minimal NodeTracerProvider whose OTLP exporter points at the
- * platform-injected collector, then relies on Next.js's native span emission
- * (route templates, method, status come from Next itself). Calling
- * `provider.register()` also installs the W3C propagators so server-side
- * `fetch` carries trace context to downstream services.
- *
- * Idempotent; a clean no-op when disabled, on the edge runtime, or when no
- * collector endpoint is available; fails silent so it never degrades the app.
+ * Server instrumentation: OTLP exporter to the platform collector, using
+ * Next's native spans. Idempotent; no-ops when disabled, on edge, or with
+ * no endpoint. Never throws.
  */
 export function register(): void {
   if (registered) return;

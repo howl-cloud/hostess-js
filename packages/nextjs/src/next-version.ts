@@ -1,11 +1,4 @@
-/**
- * The running Next.js version, read from `next/package.json` at startup — the
- * authoritative framework-version signal. Best-effort: falls back to "unknown"
- * (the platform's build-artifact extraction is the secondary source).
- *
- * Server-only (uses `require`); kept out of `./version` so it is never pulled
- * into the `"use client"` component chunk.
- */
+/** Server-only. */
 export function readNextVersion(): string {
   try {
     if (typeof require === "function") {

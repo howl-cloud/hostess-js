@@ -1,6 +1,5 @@
 import type { RouteInfo, RouteProvider } from "./types";
 
-/** Strip the query string and hash, leaving only the path. */
 export function stripQuery(pathOrUrl: string): string {
   let end = pathOrUrl.length;
   const q = pathOrUrl.indexOf("?");
@@ -10,10 +9,8 @@ export function stripQuery(pathOrUrl: string): string {
   return pathOrUrl.slice(0, end);
 }
 
-// history.pushState / replaceState do not emit an event. Patch them once (per
-// page) to dispatch one, so the default provider can observe SPA navigations
-// without every provider stacking its own monkey-patch. popstate covers
-// back/forward natively.
+// pushState/replaceState emit no event; patch once per page so the provider
+// observes SPA navigations. popstate covers back/forward.
 const LOCATION_CHANGE_EVENT = "hostess:locationchange";
 const HISTORY_PATCH_FLAG = "__hostess_history_patched__";
 
@@ -33,12 +30,9 @@ function ensureHistoryEvents(): void {
 }
 
 /**
- * Default provider with no framework knowledge: `location.pathname` is used as
- * both the route template and the concrete path — correct for non-parameterized
- * sites, and the ingest's route-hygiene caps absorb the rest. It also emits
- * navigation changes (pushState/replaceState → "spa", popstate →
- * "back-forward") so `inject()` is useful standalone in a bare SPA; adapters
- * that supply real templates replace this entirely.
+ * Framework-free provider: pathname as both route and path. Emits SPA
+ * navigations (push/replace → "spa", popstate → "back-forward"); adapters
+ * with real templates replace it entirely.
  */
 export function defaultRouteProvider(): RouteProvider {
   const read = (): RouteInfo => {

@@ -9,32 +9,19 @@ type Injector = (opts: InjectOptions) => void;
 type NavKind = "spa" | "back-forward";
 
 /**
- * Bridges Next's router state to the `@hostess/browser` `RouteProvider` seam and
- * mounts the given injector (`inject` or `injectSpeedInsights`) exactly once.
- *
- * Router detection: the App Router hooks (`usePathname`/`useParams` from
- * `next/navigation`) return `null` outside an App Router tree, so a non-null
- * pathname means App Router; otherwise we fall back to the imperative
- * `next/router` singleton for the Pages Router. Both hooks are called
- * unconditionally every render (stable hook order); only the resulting branch
- * differs. `useSearchParams` is deliberately not used — it would force a
- * `<Suspense>` boundary, and we dedupe on pathname anyway.
- *
- * Strict-mode / remount safe: a ref guards the one-time injection, and the
- * browser core is itself idempotent (a window singleton), so a double mount
- * cannot double-count.
+ * Bridge Next router state to the browser RouteProvider; mount the injector once.
+ * App Router iff usePathname() is non-null (null outside App tree); else Pages.
+ * Hooks stay unconditional; no useSearchParams (avoids a Suspense boundary).
+ * StrictMode-safe via a mount guard + idempotent browser core.
  */
 export function useHostessRoutes(inject: Injector, debug: boolean | undefined, sdk: string): void {
   const appPathname = usePathname();
   const appParams = useParams();
   const isApp = appPathname != null;
 
-  // Latest route info, read by the provider's `current()`. Updated during
-  // render for the App Router (reactive) and in effects for the Pages Router.
+  // Latest route; App updates during render, Pages in effects.
   const infoRef = useRef<RouteInfo>({ route: "/", path: "/" });
-  // The browser core's subscriber, captured when `inject` calls `onChange`.
   const cbRef = useRef<((info: RouteInfo, nav: NavKind) => void) | null>(null);
-  // popstate marks the next navigation as back/forward.
   const navRef = useRef<NavKind>("spa");
 
   const providerRef = useRef<RouteProvider>();
@@ -50,8 +37,7 @@ export function useHostessRoutes(inject: Injector, debug: boolean | undefined, s
     };
   }
 
-  // App Router: reconstruct the template synchronously so the provider is fresh
-  // before the mount effect fires the initial beacon.
+  // Reconstruct synchronously so the provider is fresh before mount.
   let appRoute = "";
   if (isApp) {
     appRoute = computeRoute(appPathname, (appParams ?? {}) as RouteParams) ?? appPathname;
@@ -64,12 +50,10 @@ export function useHostessRoutes(inject: Injector, debug: boolean | undefined, s
     injected.current = true;
     if (!isApp) infoRef.current = pagesRouteInfo();
     inject({ routeProvider: providerRef.current!, debug, sdk });
-    // Subscription is page-lifetime (these components live in the root layout);
-    // no cleanup, and re-invocation is a no-op via the guard + core idempotence.
+    // Page-lifetime subscription; no cleanup needed.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Distinguish back/forward from forward SPA navigations.
   useEffect(() => {
     if (!isApp || typeof window === "undefined") return;
     const onPop = () => {
@@ -79,9 +63,7 @@ export function useHostessRoutes(inject: Injector, debug: boolean | undefined, s
     return () => window.removeEventListener("popstate", onPop);
   }, []);
 
-  // App Router navigations: fire on pathname change only. `usePathname()` does
-  // not change on a search-param-only navigation, so those are deduped for free
-  // (the initial view is already sent by the mount effect above).
+  // Fire on pathname change only; search-only navigations dedupe for free.
   const lastPath = useRef<string | null>(null);
   useEffect(() => {
     if (!isApp) return;
@@ -96,7 +78,6 @@ export function useHostessRoutes(inject: Injector, debug: boolean | undefined, s
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isApp, appPathname, appRoute]);
 
-  // Pages Router navigations: the template is free on `router.route`.
   useEffect(() => {
     if (isApp) return;
     return subscribeToPagesRouter((info, nav) => {

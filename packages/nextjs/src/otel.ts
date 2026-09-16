@@ -1,8 +1,3 @@
-/**
- * Shared resolution helpers: enabled flag, OTLP endpoint, signal paths, and the
- * runtime guard. Kept side-effect-free so they're trivially testable.
- */
-
 const FALSE_VALUES = new Set(["0", "false", "no", "off"]);
 
 /** Default-on; disabled only by an explicit falsey HOSTESS_INSTRUMENTATION. */
@@ -12,10 +7,7 @@ export function isEnabled(): boolean {
   return true;
 }
 
-/**
- * Resolve the OTLP base endpoint. Precedence: platform-injected
- * HOSTESS_OTEL_ENDPOINT → OTEL_EXPORTER_OTLP_ENDPOINT.
- */
+/** OTLP endpoint; HOSTESS_OTEL_ENDPOINT wins over OTEL_EXPORTER_OTLP_ENDPOINT. */
 export function resolveEndpoint(): string | undefined {
   for (const candidate of [
     process.env.HOSTESS_OTEL_ENDPOINT,
@@ -33,10 +25,7 @@ export function signalEndpoint(base: string, signal: "traces" | "metrics"): stri
   return trimmed.endsWith(suffix) ? trimmed : trimmed + suffix;
 }
 
-/**
- * The OTel Node SDK only runs on the Node.js runtime. On the edge runtime we
- * no-op in v0.1 (a fetch-based exporter is a future enhancement).
- */
+/** Node runtime only; edge no-ops (fetch exporter is future work). */
 export function isNodeRuntime(): boolean {
   return (process.env.NEXT_RUNTIME ?? "nodejs") === "nodejs";
 }

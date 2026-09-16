@@ -2,15 +2,10 @@ import type { Utm } from "./types";
 
 const UTM_KEYS = ["source", "medium", "campaign", "term", "content"] as const;
 
-// Matches the ingest's per-value cap; over-length values are truncated rather
-// than dropped so a long campaign name still attributes.
+// Truncate (don't drop) over-length values so long campaigns still attribute.
 const MAX_VALUE_LENGTH = 64;
 
-/**
- * Extract the five `utm_*` parameters from a query string. Every other query
- * parameter is ignored and never sent — this is the only place a raw query
- * value crosses into a beacon.
- */
+/** Extract utm_* params; all other query params are ignored and never sent. */
 export function extractUtm(search?: string): Utm {
   const qs = search ?? (typeof location !== "undefined" ? location.search : "");
   const utm: Utm = {};

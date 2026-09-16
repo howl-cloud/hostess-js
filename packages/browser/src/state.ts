@@ -1,9 +1,6 @@
 import { BeaconQueue } from "./queue";
 
-// Per-page singleton, stashed on `window` so that `inject` and
-// `injectSpeedInsights` share one queue and one set of idempotence flags even
-// if they are pulled from separate module instances (ESM + CJS in the same
-// bundle). This is the mechanism behind strict double-inject idempotence.
+// Window singleton so inject/injectSpeedInsights share state across ESM+CJS duplicates.
 interface RumState {
   pv?: boolean;
   wv?: boolean;

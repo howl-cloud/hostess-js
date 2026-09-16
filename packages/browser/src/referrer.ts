@@ -1,8 +1,4 @@
-/**
- * Reduce a referrer URL to its origin only — never the path or query. Returns
- * "" for direct visits, same-origin navigations, and non-http(s) schemes, so a
- * beacon can never leak where on another site the visitor came from.
- */
+/** Origin-only referrer; "" for direct, same-origin, and non-http(s). Never leaks path. */
 export function referrerOrigin(ref?: string): string {
   const raw = ref ?? (typeof document !== "undefined" ? document.referrer : "");
   if (!raw) return "";

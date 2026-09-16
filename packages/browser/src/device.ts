@@ -5,13 +5,8 @@ interface UADataLike {
 }
 
 /**
- * Coarse device class from UA Client Hints with a UA-string fallback. Only
- * three buckets — no model, no fingerprinting.
- *
- * Tablet is decided from the UA string first because UA-CH low-entropy hints
- * have no tablet signal (an iPad reports `mobile: false`, indistinguishable
- * from a desktop). Everything else prefers the `mobile` hint, falling back to
- * UA-string keywords.
+ * Coarse device class (desktop/mobile/tablet only, no fingerprinting).
+ * Tablet checks the UA string first: UA-CH has no tablet signal.
  */
 export function deviceClass(): DeviceClass {
   const nav = typeof navigator !== "undefined" ? navigator : undefined;

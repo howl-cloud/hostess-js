@@ -2,8 +2,7 @@ import { SpanStatusCode, trace } from "@opentelemetry/api";
 
 import { SDK_VERSION } from "./version";
 
-// Minimal shapes of Next's onRequestError arguments — typed locally so the
-// package doesn't take a hard type dependency on a specific Next version.
+// Local shapes avoid a hard type dependency on a specific Next version.
 interface RequestInfo {
   method?: string;
 }
@@ -15,12 +14,8 @@ interface ErrorContext {
 }
 
 /**
- * Next.js `onRequestError` hook (Next ≥ 15). Records a **bounded** error event:
- * route template, method, error class name, and digest only — never messages,
- * stacks, headers, bodies, or raw URLs.
- *
- * v0.1 records it as a short error span so it surfaces in the existing traces
- * pipeline; a dedicated Errors tab is a later phase. Fails silent.
+ * onRequestError hook (Next ≥ 15). Records only route, method, error class,
+ * and digest — never messages, stacks, or bodies. Fails silent.
  */
 export function onRequestError(
   error: unknown,

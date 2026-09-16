@@ -6,7 +6,6 @@ import { pagesRouteProvider } from "./pages-route-provider";
 import { SDK_VERSION } from "./version";
 
 export interface RegisterClientOptions {
-  /** Log would-be beacons to the console (still sent unless in development). */
   debug?: boolean;
 }
 
@@ -17,16 +16,9 @@ function pagesDocument(): boolean {
 }
 
 /**
- * Browser Insights without a layout change — call once from
- * `instrumentation-client.ts`:
- *
- *     import { registerClient } from "@hostess/nextjs/client";
- *     registerClient();
- *
- * Pages Router (`__NEXT_DATA__` or an already-created `Router.router`) waits
- * for `Router.ready` so the first pageview uses `Router.route` (`/blog/[slug]`),
- * not `location.pathname`. App Router starts immediately with the default
- * provider.
+ * Browser Insights without a layout change; call once from instrumentation-client.ts.
+ * Pages Router waits for Router.ready so the first pageview uses the route
+ * template; App Router starts immediately.
  */
 export function registerClient(opts: RegisterClientOptions = {}): void {
   if (typeof window === "undefined" || typeof document === "undefined") return;
