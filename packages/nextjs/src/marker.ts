@@ -4,9 +4,7 @@ import { OTLPMetricExporter } from "@opentelemetry/exporter-metrics-otlp-http";
 
 import { signalEndpoint } from "./otel";
 
-// Dedicated, non-global MeterProvider — it exports the marker to the Hostess
-// collector without disturbing any MeterProvider the app configures for its own
-// metrics (you cannot add a reader to an existing provider).
+// Dedicated MeterProvider; never disturb the app's own metrics setup.
 let markerProvider: MeterProvider | undefined;
 
 export interface MarkerOptions {
@@ -17,12 +15,7 @@ export interface MarkerOptions {
   intervalMillis?: number;
 }
 
-/**
- * Start the instrumentation-info heartbeat: periodically exports the gauge
- * `hostess_instrumentation_info{language="js",framework="nextjs",...} 1`, so the
- * platform can tell "installed, waiting for traffic" from "not installed".
- * Idempotent.
- */
+/** Heartbeat gauge so the platform detects installed-but-idle apps. Idempotent. */
 export function startMarkerHeartbeat(options: MarkerOptions): MeterProvider {
   if (markerProvider) return markerProvider;
 

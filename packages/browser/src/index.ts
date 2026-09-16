@@ -1,13 +1,3 @@
-// @hostess/browser — framework-agnostic browser core for Hostess Audience
-// Analytics and Speed Insights.
-//
-//   import { inject, injectSpeedInsights } from "@hostess/browser";
-//   inject();               // page views
-//   injectSpeedInsights();  // Core Web Vitals
-//
-// Framework adapters (e.g. @hostess/nextjs) build <Analytics /> /
-// <SpeedInsights /> on top of these by passing a RouteProvider.
-
 export { inject } from "./pageview";
 export { injectSpeedInsights } from "./vitals";
 export { track } from "./track";

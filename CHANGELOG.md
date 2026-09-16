@@ -5,6 +5,22 @@ All notable changes to `@hostess/nextjs` are documented here.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.3.0] - 2026-09-12
+
+### Added
+
+- `@hostess/nextjs/client` — `registerClient()` for `instrumentation-client.ts`:
+
+  ```ts
+  import { registerClient } from "@hostess/nextjs/client";
+  registerClient();
+  ```
+
+  Calls `@hostess/browser` `inject()` + `injectSpeedInsights()` once, tagged
+  `nextjs@<version>`. Idempotent; no-op without a DOM; honors `debug`.
+  Pages Router uses `next/router` for real templates. App Router uses
+  `location.pathname` as the route.
+
 ## [0.2.0] - 2026-07-18
 
 ### Added
@@ -92,5 +108,7 @@ Initial release. Server-side Next.js integration for Hostess **API Insights**.
   (`<Analytics />` / `<SpeedInsights />`) ship in a later release alongside the
   platform RUM ingest path.
 
+[0.3.0]: https://github.com/howl-cloud/hostess-js/releases/tag/v0.3.0
+[0.2.0]: https://github.com/howl-cloud/hostess-js/releases/tag/v0.2.0
 [0.1.1]: https://github.com/howl-cloud/hostess-js/releases/tag/v0.1.1
 [0.1.0]: https://github.com/howl-cloud/hostess-js/releases/tag/v0.1.0

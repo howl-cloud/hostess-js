@@ -12,11 +12,7 @@ function defaultSdk(): string {
   return `browser@${SDK_VERSION}`;
 }
 
-/**
- * Start collecting page views: one `pv` beacon on initial load, then one per
- * SPA navigation reported by the route provider. Idempotent — a second call is
- * a no-op. Safe to call during SSR (no-ops without a DOM).
- */
+/** Collect pageviews (initial load + SPA navigations). Idempotent; SSR-safe. */
 export function inject(opts: InjectOptions = {}): void {
   if (!hasDom()) return;
 

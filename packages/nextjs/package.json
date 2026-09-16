@@ -1,7 +1,7 @@
 {
   "name": "@hostess/nextjs",
-  "version": "0.2.0",
-  "description": "Native Hostess insights for Next.js — instrumentation plus <Analytics /> and <SpeedInsights />.",
+  "version": "0.3.0",
+  "description": "Native Hostess insights for Next.js.",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -24,6 +24,11 @@
       "types": "./dist/server.d.ts",
       "import": "./dist/server.js",
       "require": "./dist/server.cjs"
+    },
+    "./client": {
+      "types": "./dist/client.d.ts",
+      "import": "./dist/client.js",
+      "require": "./dist/client.cjs"
     }
   },
   "files": ["dist"],

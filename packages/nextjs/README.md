@@ -59,6 +59,29 @@ reports Core Web Vitals (LCP, CLS, INP, FCP, TTFB). Both:
 
 Both accept `debug?: boolean` to log would-be beacons to the console.
 
+## Client insights — `registerClient()` (`instrumentation-client.ts`)
+
+Hostess Native Build generates this file so Analytics and Speed Insights work
+without a layout change. You can also add it yourself:
+
+```ts
+// instrumentation-client.ts
+import { registerClient } from "@hostess/nextjs/client";
+registerClient();
+```
+
+`registerClient()` calls `@hostess/browser` `inject()` and `injectSpeedInsights()`
+once, tagged `nextjs@<version>`. Idempotent; no-op without a DOM; pass
+`{ debug: true }` to log would-be beacons.
+
+- **Pages Router:** `next/router` (`Router.route` + `routeChangeComplete`) — real
+  templates, no React.
+- **App Router:** `location.pathname` as the route. Dynamic segments may show as
+  `/blog/my-post` instead of `/blog/[slug]`.
+
+`<Analytics />` and `<SpeedInsights />` stay the supported layout integration
+and still reconstruct App Router templates from `usePathname()` + `useParams()`.
+
 ## Server instrumentation — `register` / `onRequestError`
 
 The server half is a **separate entry** (`@hostess/nextjs/server`):
